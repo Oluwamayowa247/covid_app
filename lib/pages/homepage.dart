@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
 //asynchronous call to make to the api to get data for country data
   fetchcountryData() async {
     http.Response response = await http
-        .get(Uri.parse('https://corona.lmao.ninja/v3/covid-19/countries'));
+        .get(Uri.parse('https://corona.lmao.ninja/v3/covid-19/countries?sort=cases'));
 
     setState(() {
       countryData = jsonDecode(response.body);
@@ -66,6 +66,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            
             Container(
               alignment: Alignment.center,
               padding: EdgeInsets.all(10),
@@ -78,6 +79,22 @@ class _HomePageState extends State<HomePage> {
                     color: Colors.black,
                     fontWeight: FontWeight.bold),
               ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: const [
+                SizedBox(
+                  height: 32,
+                  width: 35,
+                  child: Padding(
+                    padding: EdgeInsets.only(right:15.0, top: 15),
+                    child: Icon(Icons.lightbulb, size: 30, color: Colors.black,),
+                  ) ,
+                ),
+              ],
+            ),
+          const SizedBox(
+              height: 20,
             ),
             Padding(
               padding:

@@ -39,7 +39,7 @@ class MostAffectedPanel extends StatelessWidget {
               padding: const EdgeInsets.only(right: 5.0),
               child: Text('Deaths : ' + countryData[index]['deaths'].toString(),
                   style: const TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.bold, fontSize: 13)),
+                      color: Colors.red, fontWeight: FontWeight.bold, fontSize: 13)),
             ),
           ],
         );
