@@ -1,5 +1,4 @@
 import 'package:covid_app/pages/homepage.dart';
-import 'package:covid_app/theme/themeclass.dart';
 import 'package:covid_app/theme/thememanager.dart';
 import 'package:covid_app/utils/datasource.dart';
 import 'package:flutter/material.dart';
@@ -19,17 +18,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeNotifier>(
-        builder: (context, theme, _) => MaterialApp(
+    return  MaterialApp(
               theme: ThemeData(
                   appBarTheme: AppBarTheme(
                     backgroundColor: primaryBlack,
                   ),
                   fontFamily: 'Mukta'),
               debugShowCheckedModeBanner: false,
-              home: const HomePage(),
+              home:  HomePage(),
               // );
-            ));
+            );
     //   return MaterialApp(
     //   // //themeMode: ThemeMode.system,
 

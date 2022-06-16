@@ -3,9 +3,11 @@ import 'package:covid_app/pages/country.dart';
 import 'package:covid_app/panels/infopanel.dart';
 import 'package:covid_app/panels/mostaffectedpanel.dart';
 import 'package:covid_app/panels/worldwidepanel.dart';
+import 'package:covid_app/theme/thememanager.dart';
 import 'package:covid_app/utils/datasource.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -34,8 +36,8 @@ class _HomePageState extends State<HomePage> {
 
 //asynchronous call to make to the api to get data for country data
   fetchcountryData() async {
-    http.Response response = await http
-        .get(Uri.parse('https://corona.lmao.ninja/v3/covid-19/countries?sort=cases'));
+    http.Response response = await http.get(Uri.parse(
+        'https://corona.lmao.ninja/v3/covid-19/countries?sort=cases'));
 
     setState(() {
       countryData = jsonDecode(response.body);
@@ -52,124 +54,154 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: false,
-        title: const Text(
-          'COVID-19 TRACKER',
-          style: TextStyle(
-            fontSize: 25,
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            
-            Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.all(10),
-              height: 100,
-              color: Colors.pink.shade50,
-              child: Text(
-                '  ' + DataSource.quote,
-                style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: const [
-                SizedBox(
-                  height: 32,
-                  width: 35,
-                  child: Padding(
-                    padding: EdgeInsets.only(right:15.0, top: 15),
-                    child: Icon(Icons.lightbulb, size: 30, color: Colors.black,),
-                  ) ,
+    return Consumer<ThemeNotifier>(
+        builder: (context, theme, _) => Scaffold(
+              appBar: AppBar(
+                centerTitle: false,
+                title: const Text(
+                  'COVID-19 TRACKER',
+                  style: TextStyle(fontSize: 25),
                 ),
-              ],
-            ),
-          const SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "WORLDWIDE",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
+              ),
+              body: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.all(10),
+                      height: 100,
+                      color: Colors.pink.shade50,
+                      child: Text(
+                        '  ' + DataSource.quote,
+                        style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ),
-                  ),
-                  GestureDetector(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>CountryPage()));
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: const Text(
-                        "Countries",
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        SizedBox(
+                          height: 32,
+                          width: 35,
+                          child: Padding(
+                            padding: EdgeInsets.only(right: 100.0),
+                            child: IconButton(
+                                onPressed: () => {
+                                      print('Print Light Theme'),
+                                      theme.setDarkMode(),
+                                    },
+                                icon: const Padding(
+                                  padding: EdgeInsets.only(right: 30.0),
+                                  child: Icon(
+                                    Icons.light_mode_outlined,
+                                    size: 30,
+                                  ),
+                                )),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "WORLDWIDE",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => CountryPage()));
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: const Text(
+                                "Countries",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    worldData.isEmpty
+                        ? const Center(child: CircularProgressIndicator())
+                        : WorldwidePanel(
+                            worldData: worldData,
+                          ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 10),
+                      child: Text(
+                        "Most Affected Countries",
                         style: TextStyle(
-                          color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 15,
+                          fontSize: 20,
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            worldData.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : WorldwidePanel(
-                    worldData: worldData,
-                  ),
-            const Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Text(
-                "Most Affected Countries",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    countryData.isEmpty
+                        ? Container()
+                        : MostAffectedPanel(
+                            countryData: countryData,
+                          ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    const InfoPanel(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Center(
+                        child: Text(
+                      'WE ARE IN THIS TOGETHER 💪 ... ',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    )),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  ],
                 ),
               ),
-            ),
-           const  SizedBox(
-                    height: 5,
-                  ),
-            countryData.isEmpty
-                ?  Container()
-                : MostAffectedPanel(
-                    countryData: countryData,
-                  ),
-                 const SizedBox(
-                    height: 5,
-                  ),
-                  const InfoPanel(),
-                 const SizedBox(
-                   height: 20,
-                 ),
-                const Center(child:  Text('WE ARE IN THIS TOGETHER 💪 ... ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),)),
-                const SizedBox(
-                   height: 20,
-                 ),
-                 
-          ],
-        ),
-      ),
-    );
+            ));
   }
-}
+} 
+    
+//     Scaffold(
+//       appBar: AppBar(
+//         centerTitle: false,
+//         title: const Text(
+//           'COVID-19 TRACKER',
+//           style: TextStyle(
+//             fontSize: 25,
+//           ),
+//         ),
+//       ),
+
+//     );
+//   }
+// }
